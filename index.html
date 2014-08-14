@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>slitslider</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+	<script src="./js/zepto.min.js"></script>
+	<script src="./js/fx.js"></script>
+	<!-- 用于处理向上滑动手势 -->
+	<script src="./js/touch.js"></script>
+	<script src="./js/zepto.slitslider.js"></script>
+	<style>
+	*{
+		padding: 0;
+		margin: 0;
+	}
+	html,body{
+		height: 100%;
+	}
+	.wrp{
+		width: 100%;
+		height: 100%;
+		position: relative;
+		max-width: 640px;
+		margin: 0 auto;
+	}
+	.stage{
+		width: 100%;
+		height: 100%;
+		position: absolute;
+		top: 0px;
+		left: 0px;
+		overflow: hidden;
+	}
+	.stage img{
+		width: 100%;
+	}
+	.stage1 {
+		z-index: 10;
+	}
+	.stage2 {
+		z-index: 9;
+	}
+	.stage3 {
+		z-index: 8;
+	}
+	.arrup{
+		width: 20px;
+		position: absolute;
+		left: 50%;
+		margin-left: -10px;
+		bottom: 20px;
+		z-index: 11;
+		-webkit-animation: arrup infinite 2s ease-in-out;
+		-moz-animation: arrup infinite 2s ease-in-out;
+		-o-animation: arrup infinite 2s ease-in-out;
+		animation: arrup infinite 2s ease-in-out;
+	}
+	@-webkit-keyframes arrup{
+		0%{
+			-webkit-transform:translateY(-5px);
+			opacity: 0.3;
+		}
+		50%{
+			-webkit-transform:translateY(5px);
+			opacity: 1;
+		}
+		100%{
+			-webkit-transform:translateY(-5px);
+			opacity: 0.3;
+		}
+	}
+	@-moz-keyframes arrup{
+		0%{
+			-moz-transform:translateY(-5px);
+			opacity: 0.3;
+		}
+		50%{
+			-moz-transform:translateY(5px);
+			opacity: 1;
+		}
+		100%{
+			-moz-transform:translateY(-5px);
+			opacity: 0.3;
+		}
+	}
+	@-o-keyframes arrup{
+		0%{
+			-o-transform:translateY(-5px);
+			opacity: 0.3;
+		}
+		50%{
+			-o-transform:translateY(5px);
+			opacity: 1;
+		}
+		100%{
+			-o-transform:translateY(-5px);
+			opacity: 0.3;
+		}
+	}
+	@keyframes arrup{
+		0%{
+			transform:translateY(-5px);
+			opacity: 0.3;
+		}
+		50%{
+			transform:translateY(5px);
+			opacity: 1;
+		}
+		100%{
+			transform:translateY(-5px);
+			opacity: 0.3;
+		}
+	}
+	</style>
+</head>
+<body>
+	<div class="wrp">
+		<div class="stage1 stage"><img src="./img/1.jpg" alt=""></div>
+		<div data-orientation="vertical" class="stage2 stage"><img src="./img/2.jpg" alt=""></div>
+		<div data-orientation="vertical" class="stage3 stage"><img src="./img/3.jpg" alt=""></div>
+	</div>
+	<img class="arrup" src="./img/up.png" alt="">
+	<script>
+		var useTouch = "ontouchstart" in window;
+    	var evtClick = useTouch?'tap':'click';
+		var sslider = $('.wrp').SlitSlider({vertical:true,speed:1000});
+		$(document).swipeUp(function () {
+			sslider.next();
+		});
+		$(document).swipeDown(function () {
+			sslider.prev();
+		});
+		$('.arrup').on(evtClick,function(){
+			sslider.next();
+		});
+		$(sslider).on('nextOver',function(){console.log('nextover');});
+		$(sslider).on('prevOver',function(){console.log('prevover');});
+	</script>
+</body>
+</html>
