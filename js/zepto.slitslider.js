@@ -1,11 +1,14 @@
 /**
+* zepto.slitslider.js v0.0.1
 * Zepto滑动插件，
 * 依赖js: zepto.js, zepto.fx.js
-*
+* https://github.com/cyclegtx/zepto-slitslider
+* 
+* Copyright 2014, cyclegtx
 **/
 var SlitSlider = function(container, options){
   this.options = $.extend({
-    horizontal:true, //动画移动方向。true:垂直,false:水平
+    orientation:'horizontal', //动画移动方向。horizontal:垂直,vertical:水平
     easing: 'ease-in-out',           // the easing function
     speed: 350,                //动画持续时间
     scale:1,  //图片缩放大小
@@ -36,19 +39,22 @@ SlitSlider.prototype = {
     half1.clone().removeClass('half1').addClass('half2').appendTo(item);
     var half2 = item.find('.half2');
     var transAnim = 2;
-    var isHorizontal = this.options.horizontal;
-    if(item.attr('data-orientation') == 'horizontal'){
-      isHorizontal = true;
-    }else if(item.attr('data-orientation') == 'vertical'){
-      isHorizontal = false;
-    }
 
-    if(isHorizontal){
+    var option = {};
+    option.orientation = item.attr('data-orientation')?item.attr('data-orientation'):this.options.orientation;
+    option.easing = item.attr('data-easing')?item.attr('data-easing'):this.options.easing;
+    option.speed = item.attr('data-speed')?item.attr('data-speed'):this.options.speed;
+    option.scale = item.attr('data-scale')?item.attr('data-scale'):this.options.scale;
+    option.rotateZ = item.attr('data-rotateZ')?item.attr('data-rotateZ'):this.options.rotateZ;
+    option.opacity = item.attr('data-opacity')?item.attr('data-opacity'):this.options.opacity;
+    option.maxTrans = item.attr('data-maxTrans')?item.attr('data-maxTrans'):this.options.maxTrans;
+
+    if(option.orientation == 'horizontal'){
       //垂直
       half1.css({width:pW,height:pH/2,'overflow':'hidden'});
       half2.css({width:pW,height:pH/2,'overflow':'hidden'});
       half2.find('.wrapInner').css({'margin-top':-pH/2});
-      half1.animate({'translate3d':'0,-'+this.options.maxTrans+'%,0',rotateZ:this.options.rotateZ+"deg",scale:this.options.scale,opacity:this.options.opacity},this.options.speed,this.options.easing,function(){
+      half1.animate({'translate3d':'0,-'+option.maxTrans+'%,0',rotateZ:option.rotateZ+"deg",scale:option.scale,opacity:option.opacity},option.speed,option.easing,function(){
         transAnim--;
         if(transAnim === 0){
           //已完成
@@ -57,7 +63,7 @@ SlitSlider.prototype = {
           self.animating = false;
         }
       });
-      half2.animate({'translate3d':'0,'+this.options.maxTrans+'%,0',rotateZ:this.options.rotateZ+"deg",scale:this.options.scale,opacity:this.options.opacity},this.options.speed,this.options.easing,function(){
+      half2.animate({'translate3d':'0,'+option.maxTrans+'%,0',rotateZ:option.rotateZ+"deg",scale:option.scale,opacity:option.opacity},option.speed,option.easing,function(){
         transAnim--;
         if(transAnim === 0){
           //已完成
@@ -72,7 +78,7 @@ SlitSlider.prototype = {
       half2.css({width:pW/2,height:pH,'overflow':'hidden','position':'absolute','top':'0px','right':'0px'});
       half1.find('.wrapInner').css({width:pW,height:pH});
       half2.find('.wrapInner').css({width:pW,height:pH,'margin-left':-pW/2});
-      half1.animate({'translate3d':'-'+this.options.maxTrans+'%,0,0',rotateZ:this.options.rotateZ+"deg",scale:this.options.scale,opacity:this.options.opacity},this.options.speed,this.options.easing,function(){
+      half1.animate({'translate3d':'-'+option.maxTrans+'%,0,0',rotateZ:option.rotateZ+"deg",scale:option.scale,opacity:option.opacity},option.speed,option.easing,function(){
         transAnim--;
         if(transAnim === 0){
           //已完成
@@ -81,7 +87,7 @@ SlitSlider.prototype = {
           self.animating = false;
         }
       });
-      half2.animate({'translate3d':''+this.options.maxTrans+'%,0,0',rotateZ:this.options.rotateZ+"deg",scale:this.options.scale,opacity:this.options.opacity},this.options.speed,this.options.easing,function(){
+      half2.animate({'translate3d':''+option.maxTrans+'%,0,0',rotateZ:option.rotateZ+"deg",scale:option.scale,opacity:option.opacity},option.speed,option.easing,function(){
         transAnim--;
         if(transAnim === 0){
           //已完成
@@ -107,7 +113,15 @@ SlitSlider.prototype = {
     var half1 = item.find('.half1');
     var half2 = item.find('.half2');
     var transAnim = 2;
-    half1.animate({'translate3d':'0,0,0',rotateZ:"0deg",scale:'1',opacity:'1'},this.options.speed,this.options.easing,function(){
+    var option = {};
+    option.orientation = item.attr('data-orientation')?item.attr('data-orientation'):this.options.orientation;
+    option.easing = item.attr('data-easing')?item.attr('data-easing'):this.options.easing;
+    option.speed = item.attr('data-speed')?item.attr('data-speed'):this.options.speed;
+    option.scale = item.attr('data-scale')?item.attr('data-scale'):this.options.scale;
+    option.rotateZ = item.attr('data-rotateZ')?item.attr('data-rotateZ'):this.options.rotateZ;
+    option.opacity = item.attr('data-opacity')?item.attr('data-opacity'):this.options.opacity;
+    option.maxTrans = item.attr('data-maxTrans')?item.attr('data-maxTrans'):this.options.maxTrans;
+    half1.animate({'translate3d':'0,0,0',rotateZ:"0deg",scale:'1',opacity:'1'},option.speed,option.easing,function(){
       transAnim--;
       if(transAnim === 0){
         //已完成
@@ -118,7 +132,7 @@ SlitSlider.prototype = {
         self.animating = false;
       }
     });
-    half2.animate({'translate3d':'0,0,0',rotateZ:"0deg",scale:'1',opacity:'1'},this.options.speed,this.options.easing,function(){
+    half2.animate({'translate3d':'0,0,0',rotateZ:"0deg",scale:'1',opacity:'1'},option.speed,option.easing,function(){
       transAnim--;
       if(transAnim === 0){
         //已完成
