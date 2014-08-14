@@ -134,6 +134,7 @@
 		$('.arrup').on(evtClick,function(){
 			sslider.next();
 		});
+		$(document).on('touchmove',function(e){e.preventDefault();});
 		$(sslider).on('nextOver',function(){console.log('nextover');});
 		$(sslider).on('prevOver',function(){console.log('prevover');});
 	</script>
