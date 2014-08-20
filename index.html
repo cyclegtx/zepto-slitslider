@@ -124,7 +124,7 @@
 	<script>
 		var useTouch = "ontouchstart" in window;
     	var evtClick = useTouch?'tap':'click';
-		var sslider = $('.wrp').SlitSlider({speed:1000});
+		var sslider = $('.wrp').SlitSlider({speed:1000,loop:true});
 		$(document).swipeUp(function () {
 			sslider.next();
 		});

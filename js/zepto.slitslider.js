@@ -14,7 +14,8 @@ var SlitSlider = function(container, options){
     scale:1,  //图片缩放大小
     rotateZ:0,  //图片旋转角度
     opacity:1,  //图片透明度
-    maxTrans:200 //图片最大移动距离
+    maxTrans:200, //图片最大移动距离
+    loop:false //是否循环
   }, options)
   this.animating = false;
   this.wrpEl = container;
@@ -27,10 +28,15 @@ SlitSlider.prototype = {
   next:function(){
     if(this.animating)
       return;
+    var last = false;
     var self = this;
     var itemIndex = $(this.wrpEl).attr('data-step')>>0;
-    if(itemIndex >= this.itemsNum-1)
+    if(itemIndex >= this.itemsNum-1 && !this.options.loop)
       return;
+    if(itemIndex === this.itemsNum-1 && this.options.loop){
+      last = true;
+      this.reset();
+    }
     this.animating = true;
     var item = this.items.eq(itemIndex);
     var pW = item.width(),pH = item.height();
@@ -58,18 +64,14 @@ SlitSlider.prototype = {
         transAnim--;
         if(transAnim === 0){
           //已完成
-          $(self).trigger('nextOver');
-          $(self.wrpEl).attr('data-step',itemIndex+1);
-          self.animating = false;
+          finish();
         }
       });
       half2.animate({'translate3d':'0,'+option.maxTrans+'%,0',rotateZ:option.rotateZ+"deg",scale:option.scale,opacity:option.opacity},option.speed,option.easing,function(){
         transAnim--;
         if(transAnim === 0){
           //已完成
-          $(self).trigger('nextOver');
-          $(self.wrpEl).attr('data-step',itemIndex+1);
-          self.animating = false;
+          finish();
         }
       });
     }else{
@@ -82,23 +84,32 @@ SlitSlider.prototype = {
         transAnim--;
         if(transAnim === 0){
           //已完成
-          $(self).trigger('nextOver');
-          $(self.wrpEl).attr('data-step',itemIndex+1);
-          self.animating = false;
+          finish();
         }
       });
       half2.animate({'translate3d':''+option.maxTrans+'%,0,0',rotateZ:option.rotateZ+"deg",scale:option.scale,opacity:option.opacity},option.speed,option.easing,function(){
         transAnim--;
         if(transAnim === 0){
           //已完成
-          $(self).trigger('nextOver');
-          $(self.wrpEl).attr('data-step',itemIndex+1);
-          self.animating = false;
+          finish();
         }
       });
     }
     
-    
+    function finish(){
+      $(self).trigger('nextOver');
+      if(last){
+        $(self.wrpEl).attr('data-step',0);
+        var lastIndex = self.items.eq(self.itemsNum-2).css('z-index') >>0;
+        var item = self.items.eq(self.itemsNum-1);
+        item.css('z-index',lastIndex-1);
+        item.find('.half1').find('.wrapInner').children().unwrap().unwrap();
+        item.find('.half2').remove();
+      }else{
+        $(self.wrpEl).attr('data-step',itemIndex+1);
+      }
+      self.animating = false;
+    }
     
   },
   prev:function(){
@@ -125,24 +136,34 @@ SlitSlider.prototype = {
       transAnim--;
       if(transAnim === 0){
         //已完成
-        $(self).trigger('prevOver');
-        $(self.wrpEl).attr('data-step',itemIndex-1);
-        half2.remove();
-        half1.find('.wrapInner').children().unwrap().unwrap();
-        self.animating = false;
+        finish();
       }
     });
     half2.animate({'translate3d':'0,0,0',rotateZ:"0deg",scale:'1',opacity:'1'},option.speed,option.easing,function(){
       transAnim--;
       if(transAnim === 0){
         //已完成
-        $(self).trigger('prevOver');
-        $(self.wrpEl).attr('data-step',itemIndex-1);
-        half2.remove();
-        half1.find('.wrapInner').children().unwrap().unwrap();
-        self.animating = false;
+        finish();
       }
     });
+    function finish(){
+      $(self).trigger('prevOver');
+      $(self.wrpEl).attr('data-step',itemIndex-1);
+      half2.remove();
+      half1.find('.wrapInner').children().unwrap().unwrap();
+      self.animating = false;
+    }
+  },
+  reset: function(){
+    var topIndex = this.items.eq(0).css('z-index') >>0;
+    this.items.eq(this.itemsNum-1).css('z-index',topIndex+1);
+    for(var i = 0;i<this.itemsNum-1;i++){
+      var item = this.items.eq(i);
+      var half1 = item.find('.half1');
+      var half2 = item.find('.half2');
+      half2.remove();
+      half1.find('.wrapInner').children().unwrap().unwrap();
+    }
   }
 }
 

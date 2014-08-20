@@ -23,7 +23,8 @@ zepto版本的 [jquery.slitslider.js](https://github.com/codrops/SlitSlider)。
 	scale:1,  //图片缩放大小
 	rotateZ:0,  //图片旋转角度
 	opacity:1,  //图片透明度
-	maxTrans:200 //图片最大移动距离
+	maxTrans:200, //图片最大移动距离
+	loop:false //是否循环
 }
 
 ```  
@@ -35,7 +36,7 @@ zepto版本的 [jquery.slitslider.js](https://github.com/codrops/SlitSlider)。
 	<div></div>
 </div>
 <script>
-	var sslider = $('.slider').SlitSlider({speed:1000});
+	var sslider = $('.slider').SlitSlider({speed:1000,loop:true});
 	$(document).swipeUp(function () {
 		//下一页
 		sslider.next();
