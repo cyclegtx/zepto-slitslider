@@ -35,25 +35,28 @@ SlitSlider.prototype = {
       return;
     if(itemIndex === this.itemsNum-1 && this.options.loop){
       last = true;
+      this.items.eq(0).css('display','block');
       this.reset();
     }
     this.animating = true;
-    var item = this.items.eq(itemIndex);
-    var pW = item.width(),pH = item.height();
-    item.wrapInner('<div class="wrapInner"></div>').wrapInner('<div class="half1">');
-    var half1 = item.find('.half1');
-    half1.clone().removeClass('half1').addClass('half2').appendTo(item);
-    var half2 = item.find('.half2');
+    var aniItem = this.items.eq(itemIndex);
+    var nxtItem = this.items.eq(itemIndex+1);
+    nxtItem.css('display','block');
+    var pW = aniItem.width(),pH = aniItem.height();
+    aniItem.wrapInner('<div class="wrapInner"></div>').wrapInner('<div class="half1">');
+    var half1 = aniItem.find('.half1');
+    half1.clone().removeClass('half1').addClass('half2').appendTo(aniItem);
+    var half2 = aniItem.find('.half2');
     var transAnim = 2;
 
     var option = {};
-    option.orientation = item.attr('data-orientation')?item.attr('data-orientation'):this.options.orientation;
-    option.easing = item.attr('data-easing')?item.attr('data-easing'):this.options.easing;
-    option.speed = item.attr('data-speed')?item.attr('data-speed'):this.options.speed;
-    option.scale = item.attr('data-scale')?item.attr('data-scale'):this.options.scale;
-    option.rotateZ = item.attr('data-rotateZ')?item.attr('data-rotateZ'):this.options.rotateZ;
-    option.opacity = item.attr('data-opacity')?item.attr('data-opacity'):this.options.opacity;
-    option.maxTrans = item.attr('data-maxTrans')?item.attr('data-maxTrans'):this.options.maxTrans;
+    option.orientation = aniItem.attr('data-orientation')?aniItem.attr('data-orientation'):this.options.orientation;
+    option.easing = aniItem.attr('data-easing')?aniItem.attr('data-easing'):this.options.easing;
+    option.speed = aniItem.attr('data-speed')?aniItem.attr('data-speed'):this.options.speed;
+    option.scale = aniItem.attr('data-scale')?aniItem.attr('data-scale'):this.options.scale;
+    option.rotateZ = aniItem.attr('data-rotateZ')?aniItem.attr('data-rotateZ'):this.options.rotateZ;
+    option.opacity = aniItem.attr('data-opacity')?aniItem.attr('data-opacity'):this.options.opacity;
+    option.maxTrans = aniItem.attr('data-maxTrans')?aniItem.attr('data-maxTrans'):this.options.maxTrans;
 
     if(option.orientation == 'horizontal'){
       //垂直
@@ -98,11 +101,12 @@ SlitSlider.prototype = {
     
     function finish(){
       $(self).trigger('nextOver');
+      aniItem.css('display','none');
       if(last){
         $(self.wrpEl).attr('data-step',0);
-        var lastIndex = self.items.eq(self.itemsNum-2).css('z-index') >>0;
+        var lastZIndex = self.items.eq(self.itemsNum-2).css('z-index') >>0;
         var item = self.items.eq(self.itemsNum-1);
-        item.css('z-index',lastIndex-1);
+        item.css('z-index',lastZIndex-1);
         item.find('.half1').find('.wrapInner').children().unwrap().unwrap();
         item.find('.half2').remove();
       }else{
@@ -120,18 +124,14 @@ SlitSlider.prototype = {
     if(itemIndex == 0)
       return;
     this.animating = true;
-    var item = this.items.eq(itemIndex-1);
-    var half1 = item.find('.half1');
-    var half2 = item.find('.half2');
+    var aniItem = this.items.eq(itemIndex-1);
+    aniItem.css('display','block');
+    var half1 = aniItem.find('.half1');
+    var half2 = aniItem.find('.half2');
     var transAnim = 2;
     var option = {};
-    option.orientation = item.attr('data-orientation')?item.attr('data-orientation'):this.options.orientation;
-    option.easing = item.attr('data-easing')?item.attr('data-easing'):this.options.easing;
-    option.speed = item.attr('data-speed')?item.attr('data-speed'):this.options.speed;
-    option.scale = item.attr('data-scale')?item.attr('data-scale'):this.options.scale;
-    option.rotateZ = item.attr('data-rotateZ')?item.attr('data-rotateZ'):this.options.rotateZ;
-    option.opacity = item.attr('data-opacity')?item.attr('data-opacity'):this.options.opacity;
-    option.maxTrans = item.attr('data-maxTrans')?item.attr('data-maxTrans'):this.options.maxTrans;
+    option.easing = aniItem.attr('data-easing')?aniItem.attr('data-easing'):this.options.easing;
+    option.speed = aniItem.attr('data-speed')?aniItem.attr('data-speed'):this.options.speed;
     half1.animate({'translate3d':'0,0,0',rotateZ:"0deg",scale:'1',opacity:'1'},option.speed,option.easing,function(){
       transAnim--;
       if(transAnim === 0){
