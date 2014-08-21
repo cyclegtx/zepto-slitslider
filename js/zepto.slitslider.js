@@ -16,7 +16,7 @@ var SlitSlider = function(container, options){
     opacity:1,  //图片透明度
     maxTrans:200, //图片最大移动距离
     loop:false //是否循环
-  }, options)
+  }, options);
   this.animating = false;
   this.wrpEl = container;
   this.items = $(this.wrpEl).children();
@@ -28,36 +28,30 @@ SlitSlider.prototype = {
   next:function(){
     if(this.animating)
       return;
-    var last = false;
     var self = this;
     var itemIndex = $(this.wrpEl).attr('data-step')>>0;
     if(itemIndex >= this.itemsNum-1 && !this.options.loop)
       return;
     if(itemIndex === this.itemsNum-1 && this.options.loop){
-      last = true;
       this.items.eq(0).css('display','block');
       this.reset();
     }
-    this.animating = true;
+    
     var aniItem = this.items.eq(itemIndex);
-    var nxtItem = this.items.eq(itemIndex+1);
-    nxtItem.css('display','block');
-    var pW = aniItem.width(),pH = aniItem.height();
-    aniItem.wrapInner('<div class="wrapInner"></div>').wrapInner('<div class="half1">');
-    var half1 = aniItem.find('.half1');
-    half1.clone().removeClass('half1').addClass('half2').appendTo(aniItem);
-    var half2 = aniItem.find('.half2');
+    this.items.eq(itemIndex+1).css('display','block');
+    this.donext(aniItem);
+    
+  },
+  donext:function(item){
+    var self = this;
+    this.animating = true;
+    var pW = item.width(),pH = item.height();
+    item.wrapInner('<div class="wrapInner"></div>').wrapInner('<div class="half1">');
+    var half1 = item.find('.half1');
+    half1.clone().removeClass('half1').addClass('half2').appendTo(item);
+    var half2 = item.find('.half2');
     var transAnim = 2;
-
-    var option = {};
-    option.orientation = aniItem.attr('data-orientation')?aniItem.attr('data-orientation'):this.options.orientation;
-    option.easing = aniItem.attr('data-easing')?aniItem.attr('data-easing'):this.options.easing;
-    option.speed = aniItem.attr('data-speed')?aniItem.attr('data-speed'):this.options.speed;
-    option.scale = aniItem.attr('data-scale')?aniItem.attr('data-scale'):this.options.scale;
-    option.rotateZ = aniItem.attr('data-rotateZ')?aniItem.attr('data-rotateZ'):this.options.rotateZ;
-    option.opacity = aniItem.attr('data-opacity')?aniItem.attr('data-opacity'):this.options.opacity;
-    option.maxTrans = aniItem.attr('data-maxTrans')?aniItem.attr('data-maxTrans'):this.options.maxTrans;
-
+    var option = this.getSpeOption(item);
     if(option.orientation == 'horizontal'){
       //垂直
       half1.css({width:pW,height:pH/2,'overflow':'hidden'});
@@ -101,20 +95,20 @@ SlitSlider.prototype = {
     
     function finish(){
       $(self).trigger('nextOver');
-      aniItem.css('display','none');
-      if(last){
+      item.css('display','none');
+      var itemIndex = $(self.wrpEl).attr('data-step')>>0;
+      if(itemIndex === self.itemsNum-1 && self.options.loop){
         $(self.wrpEl).attr('data-step',0);
         var lastZIndex = self.items.eq(self.itemsNum-2).css('z-index') >>0;
-        var item = self.items.eq(self.itemsNum-1);
-        item.css('z-index',lastZIndex-1);
-        item.find('.half1').find('.wrapInner').children().unwrap().unwrap();
-        item.find('.half2').remove();
+        var tmp = self.items.eq(self.itemsNum-1);
+        tmp.css('z-index',lastZIndex-1);
+        tmp.find('.half1').find('.wrapInner').children().unwrap().unwrap();
+        tmp.find('.half2').remove();
       }else{
         $(self.wrpEl).attr('data-step',itemIndex+1);
       }
       self.animating = false;
     }
-    
   },
   prev:function(){
     if(this.animating)
@@ -123,15 +117,17 @@ SlitSlider.prototype = {
     var itemIndex = $(this.wrpEl).attr('data-step')>>0;
     if(itemIndex == 0)
       return;
-    this.animating = true;
     var aniItem = this.items.eq(itemIndex-1);
-    aniItem.css('display','block');
-    var half1 = aniItem.find('.half1');
-    var half2 = aniItem.find('.half2');
+    this.doprev(aniItem);
+  },
+  doprev:function(item){
+    var self = this;
+    this.animating = true;
+    item.css('display','block');
+    var half1 = item.find('.half1');
+    var half2 = item.find('.half2');
     var transAnim = 2;
-    var option = {};
-    option.easing = aniItem.attr('data-easing')?aniItem.attr('data-easing'):this.options.easing;
-    option.speed = aniItem.attr('data-speed')?aniItem.attr('data-speed'):this.options.speed;
+    var option = this.getSpeOption(item);
     half1.animate({'translate3d':'0,0,0',rotateZ:"0deg",scale:'1',opacity:'1'},option.speed,option.easing,function(){
       transAnim--;
       if(transAnim === 0){
@@ -148,6 +144,7 @@ SlitSlider.prototype = {
     });
     function finish(){
       $(self).trigger('prevOver');
+      var itemIndex = $(self.wrpEl).attr('data-step')>>0;
       $(self.wrpEl).attr('data-step',itemIndex-1);
       half2.remove();
       half1.find('.wrapInner').children().unwrap().unwrap();
@@ -163,7 +160,93 @@ SlitSlider.prototype = {
       var half2 = item.find('.half2');
       half2.remove();
       half1.find('.wrapInner').children().unwrap().unwrap();
+      item.css('display','block');
     }
+  },
+  to:function(toStep){
+    var self = this;
+    var toStep = toStep === undefined?0:toStep;
+    var curStep = $(this.wrpEl).attr('data-step')>>0;
+    if(toStep > curStep){
+      //next
+      for(var i=curStep+1;i<toStep;i++){
+        var aniItem = self.items.eq(i);
+        var pW = aniItem.width(),pH = aniItem.height();
+        aniItem.wrapInner('<div class="wrapInner"></div>').wrapInner('<div class="half1">');
+        aniItem.css('display','none');
+        var half1 = aniItem.find('.half1');
+        half1.clone().removeClass('half1').addClass('half2').appendTo(aniItem);
+        var half2 = aniItem.find('.half2');
+        var option = this.getSpeOption(aniItem);
+        if(option.orientation == 'horizontal'){
+          //垂直
+          half1.css({width:pW,height:pH/2,'overflow':'hidden'});
+          half2.css({width:pW,height:pH/2,'overflow':'hidden'});
+          half2.find('.wrapInner').css({'margin-top':-pH/2});
+          half1.animate({'translate3d':'0,-'+option.maxTrans+'%,0',rotateZ:option.rotateZ+"deg",scale:option.scale,opacity:option.opacity},0);
+          half2.animate({'translate3d':'0,'+option.maxTrans+'%,0',rotateZ:option.rotateZ+"deg",scale:option.scale,opacity:option.opacity},0);
+        }else{
+          //水平
+          half1.css({width:pW/2,height:pH,'overflow':'hidden','position':'absolute','top':'0px','left':'0px'});
+          half2.css({width:pW/2,height:pH,'overflow':'hidden','position':'absolute','top':'0px','right':'0px'});
+          half1.find('.wrapInner').css({width:pW,height:pH});
+          half2.find('.wrapInner').css({width:pW,height:pH,'margin-left':-pW/2});
+          half1.animate({'translate3d':'-'+option.maxTrans+'%,0,0',rotateZ:option.rotateZ+"deg",scale:option.scale,opacity:option.opacity},0);
+          half2.animate({'translate3d':''+option.maxTrans+'%,0,0',rotateZ:option.rotateZ+"deg",scale:option.scale,opacity:option.opacity},0);
+        }
+      }
+      var curItem = this.items.eq(curStep);
+      this.items.eq(toStep).css('display','block');
+      $(this.wrpEl).attr('data-step',toStep-1);
+      this.donext(curItem);
+    }else if(toStep < curStep){
+      //prev
+      this.animating = true;
+      var toItem = this.items.eq(toStep);
+      toItem.css('display','block');
+      var half1 = toItem.find('.half1');
+      var half2 = toItem.find('.half2');
+      var transAnim = 2;
+      var option = this.getSpeOption(aniItem);
+      half1.animate({'translate3d':'0,0,0',rotateZ:"0deg",scale:'1',opacity:'1'},option.speed,option.easing,function(){
+        transAnim--;
+        if(transAnim === 0){
+          prefinish();
+        }
+      });
+      half2.animate({'translate3d':'0,0,0',rotateZ:"0deg",scale:'1',opacity:'1'},option.speed,option.easing,function(){
+        transAnim--;
+        if(transAnim === 0){
+          prefinish();
+        }
+      });
+      function prefinish(){
+        $(self).trigger('prevOver');
+        $(self.wrpEl).attr('data-step',toStep);
+        half2.remove();
+        half1.find('.wrapInner').children().unwrap().unwrap();
+        self.animating = false;
+        for(var i=curStep;i>toStep;i--){
+          var aniItem = self.items.eq(i);
+          aniItem.css('display','block');
+          aniItem.find('.half2').remove();
+          aniItem.find('.half1').find('.wrapInner').children().unwrap().unwrap();
+        }
+      }
+    }else{
+      return;
+    }
+  },
+  getSpeOption:function(item){
+    var option = {};
+    option.orientation = item.attr('data-orientation')?item.attr('data-orientation'):this.options.orientation;
+    option.easing = item.attr('data-easing')?item.attr('data-easing'):this.options.easing;
+    option.speed = item.attr('data-speed')?item.attr('data-speed'):this.options.speed;
+    option.scale = item.attr('data-scale')?item.attr('data-scale'):this.options.scale;
+    option.rotateZ = item.attr('data-rotateZ')?item.attr('data-rotateZ'):this.options.rotateZ;
+    option.opacity = item.attr('data-opacity')?item.attr('data-opacity'):this.options.opacity;
+    option.maxTrans = item.attr('data-maxTrans')?item.attr('data-maxTrans'):this.options.maxTrans;
+    return option;
   }
 }
 

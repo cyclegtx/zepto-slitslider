@@ -45,9 +45,11 @@ zepto版本的 [jquery.slitslider.js](https://github.com/codrops/SlitSlider)。
 		//上一页
 		sslider.prev();
 	});
+	//去往第3页
+	sslider.to(2)
 </script>
 ```  
-调用```.next()```为下一页，```.prev()```为上一页。  
+调用```.next()```为下一页，```.prev()```为上一页，```.to(n)```为跳往第n页   
 
 #####大体实现方法：  
 当调用```next()```的时候会根据```.slider````上的```data-step```来确定当前是第几页，并取得当前页面的节点。和页面的宽度高度```pW,pH```  
