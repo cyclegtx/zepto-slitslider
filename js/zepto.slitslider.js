@@ -56,7 +56,8 @@ SlitSlider.prototype = {
       //垂直
       half1.css({width:pW,height:pH/2,'overflow':'hidden'});
       half2.css({width:pW,height:pH/2,'overflow':'hidden'});
-      half2.find('.wrapInner').css({'margin-top':-pH/2});
+      half1.find('.wrapInner').css({width:pW,height:pH});
+      half2.find('.wrapInner').css({'margin-top':-pH/2,width:pW,height:pH});
       half1.animate({'translate3d':'0,-'+option.maxTrans+'%,0',rotateZ:option.rotateZ+"deg",scale:option.scale,opacity:option.opacity},option.speed,option.easing,function(){
         transAnim--;
         if(transAnim === 0){
@@ -182,7 +183,8 @@ SlitSlider.prototype = {
           //垂直
           half1.css({width:pW,height:pH/2,'overflow':'hidden'});
           half2.css({width:pW,height:pH/2,'overflow':'hidden'});
-          half2.find('.wrapInner').css({'margin-top':-pH/2});
+          half1.find('.wrapInner').css({width:pW,height:pH});
+          half2.find('.wrapInner').css({width:pW,height:pH,'margin-top':-pH/2});
           half1.animate({'translate3d':'0,-'+option.maxTrans+'%,0',rotateZ:option.rotateZ+"deg",scale:option.scale,opacity:option.opacity},0);
           half2.animate({'translate3d':'0,'+option.maxTrans+'%,0',rotateZ:option.rotateZ+"deg",scale:option.scale,opacity:option.opacity},0);
         }else{
