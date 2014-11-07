@@ -88,3 +88,5 @@ if......
 
 
 欢迎关注我的微博[@UED天机](http://weibo.com/uedtianji)
+
+更多教程请访问：[ued.sexy](http://ued.sexy)  
