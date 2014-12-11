@@ -209,7 +209,7 @@ SlitSlider.prototype = {
       var half1 = toItem.find('.half1');
       var half2 = toItem.find('.half2');
       var transAnim = 2;
-      var option = this.getSpeOption(aniItem);
+      var option = this.getSpeOption(toItem);
       half1.animate({'translate3d':'0,0,0',rotateZ:"0deg",scale:'1',opacity:'1'},option.speed,option.easing,function(){
         transAnim--;
         if(transAnim === 0){
