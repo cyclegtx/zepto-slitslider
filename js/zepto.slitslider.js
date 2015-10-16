@@ -205,6 +205,7 @@ SlitSlider.prototype = {
       //prev
       this.animating = true;
       var toItem = this.items.eq(toStep);
+      var aniItem = self.items.eq(curStep-1);
       toItem.css('display','block');
       var half1 = toItem.find('.half1');
       var half2 = toItem.find('.half2');
